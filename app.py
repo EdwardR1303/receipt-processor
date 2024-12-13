@@ -1,4 +1,5 @@
 import uuid
+import markdown
 from flask import jsonify, request, Flask
 
 from receipt_processor import ReceiptProcessor
@@ -9,7 +10,10 @@ RECEIPTS = {}
 
 @app.route('/')
 def home():
-    return "Receipt Processor."
+    with open("README.md", 'r') as f:
+        text = f.read()
+        html = markdown.markdown(text)
+    return html
 
 @app.route('/receipts/<id>/points', methods=['GET'])
 def get_points(id):
