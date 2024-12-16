@@ -1,3 +1,4 @@
+import re
 import math
 
 class ReceiptProcessor():
@@ -23,6 +24,9 @@ class ReceiptProcessor():
     
     def points_alphanum_rule(self):
         """One point for every alphanumeric character in the retailer name."""
+        pattern = r"^[\w\s\-&]+$"
+        if not re.match(pattern, self.retailer):
+            raise Exception('Invalid format for retailer')
         
         for char in self.retailer:
             if char.isalnum():
@@ -30,6 +34,9 @@ class ReceiptProcessor():
 
     def points_round_dollar_rule(self):
         """50 points if the total is a round dollar amount with no cents."""
+        pattern = r"^\$?\d+\.\d{2}$"
+        if not re.match(pattern, self.total):
+            raise Exception('Invalid format for total')
         
         if self.total.endswith(".00"):
             self.total_points += 50
@@ -64,6 +71,10 @@ class ReceiptProcessor():
         """6 points if the day in the purchase date is odd."""
         
         #Assumes the date is in YYYY-MM-DD format
+        pattern = r"^\d{4}-\d{2}-\d{2}$"
+        if not re.match(pattern, self.purchase_date):
+            raise Exception('Invalid format for purchase_date')
+        
         day = self.purchase_date.split('-')[-1]
         if int(day) % 2 == 1:
             self.total_points += 6
@@ -73,6 +84,9 @@ class ReceiptProcessor():
         """10 points if the time of purchase is after 2:00pm and before 4:00pm."""
         
         #Assumes the purchase time is in military time
+        pattern = r"^\d{2}:\d{2}$"
+        if not re.match(pattern, self.purchase_time):
+            raise Exception('Invalid format for purchase_time')
         hour = int(self.purchase_time.split(':')[0])
 
         if hour >= 14 and hour < 16:
